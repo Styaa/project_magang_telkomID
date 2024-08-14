@@ -4,7 +4,6 @@ import background from '../../../public/images/mainBackground.jpg';
 import { useState } from 'react';
 import TextInput from '@/Components/TextInput';
 import OpenAI from 'openai'
-import PrimaryButton from '@/Components/PrimaryButton';
 import { Textarea } from '@headlessui/react';
 
 const openai = new OpenAI({
@@ -14,20 +13,36 @@ const openai = new OpenAI({
 
 export default function Dashboard({ auth }) {
     const [isVisible, setIsVisible] = useState(true);
-    const { data, setData, post, processing, errors, reset } = useForm({
-        input: 'halo',
-        output: '',
-    });
+    // const { data, setData, post, processing, errors, reset } = useForm({
+    //     input: '',
+    //     output: '',
+    // });
+
+    const [input, setInput] = useState("");
+    const [output, setOutput] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await openai.CreateCompletion({
-            model: 'GPT-4o',
-            prompt: input,
-            max_tokens: 100
-        })
-
-        setOutput(response.data.choices[0].text);
+        try {
+            const response = await openai.chat.completions.create({
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    {
+                        "role": "assistant",
+                        "content": "HALO BANG JAGO"
+                    },
+                    {
+                        "role": "user",
+                        "content": "hi"
+                    }
+                ]
+            });
+            console.log(response.choices[0].message.content);
+            setOutput(response.choices[0].message.content)
+        } catch (error) {
+            console.error("Failed to fetch the completion: ", error);
+            // Optionally update the state to show an error message to the user
+        }
     }
 
     return (
@@ -35,72 +50,74 @@ export default function Dashboard({ auth }) {
             user={auth.user}
         >
             <Head title="Dashboard" />
-            <div className="flex flex-col h-screen bg-cover bg-center" style={{ backgroundImage: `url(${background})` }}>
-                <div className="absolute">
-                    <div className="flex flex-col py-12 w-screen h-screen items-center justify-center">
-                        <div className="absolute max-w-7xl mx-auto items-center">
-                            {isVisible && <h1 className="text-5xl font-bold text-white mb-6">Ask Me Anything</h1>}
+            <div className="flex flex-col w-screen h-screen bg-cover bg-center bg-slate-600">
+                <div className="mx-14 p-4 relative mt-24 h-full">
+                    <div className="grid grid-cols-3 ">
+                        <div className="col-span-6 grid grid-cols-7 grid-rows-1 gap-4 h-128">
+                            <div className="col-span-2 row-span-1 p-4 border border-green-600 rounded-lg shadow ">
+                                <TextInput>
 
-                            {isVisible &&
-                            <button
-                                className="bg-blue-500 text-white px-8 py-4 rounded-full text-md hover:bg-blue-900 transition"
-                                onClick={() => setIsVisible(false)} > Get Started </button>}
+                                </TextInput>
+                            </div>
+                            <div className="col-span-5 row-span-1 p-4 border border-blue-600 rounded-lg shadow max-h-screen">
+                                <div className="flex max-w-7xl mx-auto items-center justify-items-end flex-col">
+                                        {isVisible && <h1 className="text-5xl font-bold text-white mb-6">Ask Me Anything</h1>}
+
+                                        {isVisible &&
+                                        <button
+                                            className="bg-blue-500 text-white px-8 py-4 rounded-full text-md hover:bg-blue-900 transition"
+                                            onClick={() => setIsVisible(false)} > Get Started </button>}
+                                    </div>
+                                    {!isVisible && <div className="flex overflow-y-auto -z-0 h-full max-h-128">
+                                        <div className="flex-1 ">
+                                            <div className="flex mt-4 mr-2 justify-start">
+                                                <div className="bg-emerald-300 rounded-lg px-6 py-3 text-black w-fit ">
+                                                    Hello! How can i help you today?
+                                                </div>
+                                            </div>
+
+                                            {input ? (
+                                                <div className="flex mt-4 mr-2 justify-end h-auto">
+                                                    <div className="bg-cyan-300 rounded-lg px-6 py-3 text-black w-fit max-w-3xl h-fit break-words" autoComplete="input">
+                                                        {input}
+                                                    </div>
+                                                </div>
+                                            ) : null}
+
+                                            {output ? (
+                                                <div className="flex mt-4 mr-2 justify-start h-auto">
+                                                    <div className="bg-emerald-300 rounded-lg px-6 py-3 text-black w-fit h-fit break-words" autoComplete="input">
+                                                        {output}
+                                                    </div>
+                                                </div>
+                                            ) : null}
+
+                                        </div>
+                                    </div>}
+                            </div>
+
                         </div>
-                        {!isVisible && <div className="flex overflow-y-auto -z-0 w-3/6 h-full pt-14">
-                            <div className="flex-1 overflow-y-auto">
-                                <div className="flex mt-4 mr-2 justify-end">
-                                    <div className="bg-cyan-300 rounded-lg px-6 py-3 text-black w-fit ">
-                                        HALO
-                                    </div>
-                                </div>
+                    </div>
+                    <div className="p-4 border border-red-600 rounded-lg shadow mt-6 max-w-full">
+                                {!isVisible && <form onSubmit={handleSubmit} className='justify-center items-center flex relative '>
+                                        <Textarea
+                                            id="input"
+                                            value={input}
+                                            onChange={(e) => setInput(e.target.value)}
+                                            type="text"
+                                            className="w-full mt-1 bg-transparent text-cyan-50 pr-12 break-words h-auto border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            autoComplete="new-input"
+                                            rows="3"
+                                            placeholder="Allow me to help you"
+                                            required
+                                        />
 
-                                <div className="flex mt-4 mr-2 justify-start">
-                                    <div className="bg-emerald-300 rounded-lg px-6 py-3 text-black w-fit ">
-                                        HALO
-                                    </div>
-                                </div>
-
-                                {data.input ? (
-                                    <div className="flex mt-4 mr-2 justify-end h-auto">
-                                        <div className="bg-cyan-300 rounded-lg px-6 py-3 text-black w-fit max-w-3xl h-fit break-words" autoComplete="input">
-                                            {data.input}
+                                        <div className="flex justify-end">
+                                            <button className=' h-full text-light items-center pr-11' type='submit'>
+                                                Ask
+                                            </button>
                                         </div>
-                                    </div>
-                                ) : null}
-
-                                {data.output ? (
-                                    <div className="flex mt-4 mr-2 justify-start">
-                                        <div className="bg-emerald-300 rounded-lg px-6 py-3 text-black w-fit h-fit">
-                                            {data.output}
-                                        </div>
-                                    </div>
-                                ) : null}
-
-                            </div>
-                        </div>}
-
-                        <div className="relative items-center justify-center mt-3 w-3/6 h-auto">
-                            {!isVisible && <form onSubmit={handleSubmit} className='flex '>
-                                    <Textarea
-                                        id="input"
-                                        onChange={(e) => setData('input', e.target.value)}
-                                        type="text"
-                                        className="flex flex-grow mt-1 w-full bg-black text-cyan-50 pr-12 break-words h-auto border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                        autoComplete="new-input"
-                                        rows="3"
-                                        placeholder="Allow me to help you"
-                                        required
-                                    />
-
-                                    <div className="flex justify-end">
-                                        <button className='absolute h-full text-light items-center pr-3'>
-                                            Ask
-                                        </button>
-                                    </div>
                                 </form>}
-                            </div>
-
-
                     </div>
                 </div>
             </div>

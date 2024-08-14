@@ -18,6 +18,12 @@ export default {
             colors: {
                 'light': '#00CCFF',
                 'darker': '#000066'
+            },
+            maxHeight: {
+                '128': '38rem',
+            },
+            height: {
+                '128': '42rem',
             }
         },
     },
