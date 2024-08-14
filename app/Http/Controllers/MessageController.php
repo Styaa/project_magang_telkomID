@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+use function Pest\Laravel\json;
+use function Pest\Laravel\post;
 
 class MessageController extends Controller
 {
@@ -29,6 +33,36 @@ class MessageController extends Controller
     public function store(Request $request)
     {
         //
+        $message = new Message();
+        $message->sender = $request->get('role');
+        $message->message_text = $request->get('input');
+        $message->conversation_id = $request->selectedConversation;
+        $message->timestamp = now();
+        $message->save();
+
+        $filepath = "./public/user_conversation/Conversation" . $request->selectedConversation . $request->get('user_id') . ".json";
+
+        // Check if the file exists and read its contents
+        if (Storage::exists($filepath)) {
+            $json = json_decode(Storage::get($filepath), true);
+        } else {
+            $json = [];
+        }
+
+        // Create the new message array
+        $msg = [
+            "role" => $request->get('role'),
+            "content" => $request->get('input')
+        ];
+
+        // Append the new message to the existing array
+        $json[] = $msg;
+
+        // Encode the array back to JSON and save it
+        Storage::put($filepath, json_encode($json, JSON_PRETTY_PRINT));
+
+
+        return redirect(route('dashboard', absolute: false));
     }
 
     /**

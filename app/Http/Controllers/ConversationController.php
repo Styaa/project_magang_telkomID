@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ConversationController extends Controller
 {
@@ -13,6 +17,8 @@ class ConversationController extends Controller
     public function index()
     {
         //
+        $conversations = Conversation::where('user_id', Auth::user()->id)->get();
+        return response()->json($conversations);
     }
 
     /**
@@ -29,6 +35,22 @@ class ConversationController extends Controller
     public function store(Request $request)
     {
         //
+        $countData = DB::table('conversations')->count();
+        $user = Auth::user();
+
+        $conversation = new Conversation;
+        $conversation->title = "Conversation" . ((int) $countData + 1);
+        $conversation->user_id = $user->id;
+        $conversation->save();
+
+        $jsonMsg = [];
+        $jsonString = json_encode($jsonMsg);
+        $filename = $conversation->title . $conversation->user_id . ".json";
+        $filepath = "./user_conversation/" . $filename;
+
+        Storage::disk('local')->put($filepath, $jsonString);
+
+        return redirect(route('dashboard', absolute: false));
     }
 
     /**
@@ -37,6 +59,8 @@ class ConversationController extends Controller
     public function show(Conversation $conversation)
     {
         //
+        $messages = Message::where('conversation_id', $conversation->id)->get();
+        return response()->json($messages);
     }
 
     /**

@@ -17,7 +17,13 @@ export default {
             },
             colors: {
                 'light': '#00CCFF',
-                'darker': '#000066'
+                'darker': '#000066',
+                'primary': "#1B1B1F",
+                'accent': "#4CAF50",
+                'secondAccnt': '#FF5722',
+                'text': "#E0E0E0",
+                'muted': "#757575",
+                'lines': '#282A36'
             },
             maxHeight: {
                 '128': '38rem',
