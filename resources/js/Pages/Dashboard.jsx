@@ -24,6 +24,7 @@ export default function Dashboard({ auth, user }) {
 
     const handleSubmit = async (e) => {
         getPrevMsg();
+        console.log(data.prevMsg);
         try {
             const response = await openai.chat.completions.create({
                 model: 'gpt-4o-mini',
@@ -72,7 +73,7 @@ export default function Dashboard({ auth, user }) {
     }
 
     const getPrevMsg = () => {
-        const fileUrl = `/storage/user_conversation/Conversation${data.selectedConversation}${auth.user.id}.json`;
+        const fileUrl =  `/storage/user_conversation/Conversation${data.selectedConversation}${auth.user.id}.json`;
 
         fetch(fileUrl)
             .then(response => {
