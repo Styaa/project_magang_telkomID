@@ -35,9 +35,7 @@ Section History masih belum bisa terupdate secara otomatis, oleh karena itu webs
 
 Sistem menyimpan percakapan user pada database, namun untuk saat ini database yang digunakan masih database lokal yang mana harus di import terlebih dahulu. Sistem ini menggunakan database MySQL pada localhost. (Untuk nama database dapat dicocokkan pada file .env)
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+-   **File database terdapat pada github ini dengan nama project_telkom_indonesia.sql**
 
 ## License
 
