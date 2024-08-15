@@ -22,26 +22,6 @@ export default function Dashboard({ auth, user }) {
         prevMsg: []
     });
 
-    // const handleSubmit = async (e) => {
-    //     try {
-    //         const response = await openai.chat.completions.create({
-    //             model: 'gpt-4o-mini',
-    //             messages: [
-    //                 {
-    //                     "role": "user",
-    //                     "content": data.input
-    //                 },
-    //             ]
-    //         });
-
-    //         post(route('message.store', {'role': 'assistant', 'input': response.choices[0].message.content, 'user_id': auth.user.id}), {
-    //             onFinish: () =>  {data.output = "", displayMessage(data.selectedConversation)}
-    //         });
-    //     } catch (error) {
-    //         console.error("Failed to fetch the completion: ", error);
-    //     }
-    // }
-
     const submitConversation = (e) => {
         e.preventDefault();
         post(route('conversation.store'), {
@@ -51,7 +31,6 @@ export default function Dashboard({ auth, user }) {
 
     const submitMessage = (e) => {
         e.preventDefault();
-        // handleSubmit();
         post(route('message.store', {'role': 'user', 'user_id': auth.user.id}), {
             onFinish: () =>  {data.input = "", displayMessage(data.selectedConversation)}
         });
@@ -68,20 +47,6 @@ export default function Dashboard({ auth, user }) {
                 .catch(error => {
                     console.error("There was an error fetching the conversations!", error);
                 });
-    }
-
-    const getPrevMsg = () => {
-        const fileUrl =  `/storage/user_conversation/Conversation${data.selectedConversation}${auth.user.id}.json`;
-
-        fetch(fileUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(json => setData('prevMsg', json))
-            .catch(error => console.error('Error fetching the JSON file:', error));
     }
 
     const [conversations, setConversations] = useState([]);
