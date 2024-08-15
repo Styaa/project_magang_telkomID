@@ -35,7 +35,7 @@ Section History masih belum bisa terupdate secara otomatis, oleh karena itu webs
 
 Sistem menyimpan percakapan user pada database, namun untuk saat ini database yang digunakan masih database lokal yang mana harus di import terlebih dahulu. Sistem ini menggunakan database MySQL pada localhost. (Untuk nama database dapat dicocokkan pada file .env)
 
--   **File database terdapat pada github ini dengan nama project_telkom_indonesia.sql**
+-   **File database terdapat pada github ini dengan nama [project_telkom_indonesia.sql](https://github.com/Styaa/project_magang_telkomID/blob/main/project_telkom_indonesia.sql)**
 
 ## License
 
