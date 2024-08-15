@@ -22,27 +22,25 @@ export default function Dashboard({ auth, user }) {
         prevMsg: []
     });
 
-    const handleSubmit = async (e) => {
-        getPrevMsg();
-        console.log(data.prevMsg);
-        try {
-            const response = await openai.chat.completions.create({
-                model: 'gpt-4o-mini',
-                messages: [
-                    {
-                        "role": "user",
-                        "content": data.prevMsg + data.input
-                    },
-                ]
-            });
+    // const handleSubmit = async (e) => {
+    //     try {
+    //         const response = await openai.chat.completions.create({
+    //             model: 'gpt-4o-mini',
+    //             messages: [
+    //                 {
+    //                     "role": "user",
+    //                     "content": data.input
+    //                 },
+    //             ]
+    //         });
 
-            post(route('message.store', {'role': 'assistant', 'input': response.choices[0].message.content, 'user_id': auth.user.id}), {
-                onFinish: () =>  {data.output = "", displayMessage(data.selectedConversation)}
-            });
-        } catch (error) {
-            console.error("Failed to fetch the completion: ", error);
-        }
-    }
+    //         post(route('message.store', {'role': 'assistant', 'input': response.choices[0].message.content, 'user_id': auth.user.id}), {
+    //             onFinish: () =>  {data.output = "", displayMessage(data.selectedConversation)}
+    //         });
+    //     } catch (error) {
+    //         console.error("Failed to fetch the completion: ", error);
+    //     }
+    // }
 
     const submitConversation = (e) => {
         e.preventDefault();
@@ -53,7 +51,7 @@ export default function Dashboard({ auth, user }) {
 
     const submitMessage = (e) => {
         e.preventDefault();
-        handleSubmit();
+        // handleSubmit();
         post(route('message.store', {'role': 'user', 'user_id': auth.user.id}), {
             onFinish: () =>  {data.input = "", displayMessage(data.selectedConversation)}
         });

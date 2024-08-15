@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use OpenAI\Laravel\Facades\OpenAI;
 
 use function Pest\Laravel\json;
 use function Pest\Laravel\post;
@@ -33,13 +34,6 @@ class MessageController extends Controller
     public function store(Request $request)
     {
         //
-        $message = new Message();
-        $message->sender = $request->get('role');
-        $message->message_text = $request->get('input');
-        $message->conversation_id = $request->selectedConversation;
-        $message->timestamp = now();
-        $message->save();
-
         $filepath = "./public/user_conversation/Conversation" . $request->selectedConversation . $request->get('user_id') . ".json";
 
         // Check if the file exists and read its contents
@@ -57,6 +51,35 @@ class MessageController extends Controller
 
         // Append the new message to the existing array
         $json[] = $msg;
+
+        $response = OpenAI::chat()->create([
+            'model' => 'gpt-4o-mini',
+            'messages' => $json,
+        ]);
+
+        $jawaban = $response['choices'][0]['message']['content'];
+
+        $msgJawaban = [
+            "role" => "assistant",
+            "content" => $jawaban
+        ];
+
+        // Append the new message to the existing array
+        $json[] = $msgJawaban;
+
+        $message = new Message();
+        $message->sender = "user";
+        $message->message_text = $request->get('input');
+        $message->conversation_id = $request->selectedConversation;
+        $message->timestamp = now();
+        $message->save();
+
+        $message = new Message();
+        $message->sender = "assistant";
+        $message->message_text = $jawaban;
+        $message->conversation_id = $request->selectedConversation;
+        $message->timestamp = now();
+        $message->save();
 
         // Encode the array back to JSON and save it
         Storage::put($filepath, json_encode($json, JSON_PRETTY_PRINT));
